@@ -8,6 +8,7 @@ const dict = new Map<ServerWebSocket<{
 }>,number>()
 let count = 0
 const server = Bun.serve<{ authToken: string }>({
+    hostname:'0.0.0.0',
     fetch(req, server) {
       const success = server.upgrade(req);
       if (success) {
