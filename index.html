@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" oninput="ws.send(event.currentTarget.value)">
+    <div></div>
+    <script>
+        const ws = new WebSocket("ws://localhost:3000/")
+        const div = document.querySelector('div')
+        ws.addEventListener("message", (ev) => {
+            /** @type {{type: string, message:string, user:number}} */
+            const json = JSON.parse(ev.data)
+            if(json.type === 'message') {
+                let user = div.querySelector(`[data-user="${json.user}"]`)
+                if(!user) {
+                    user = document.createElement('div');
+                    user.dataset.user = json.user
+                    div.append(user)
+                }
+                user.textContent = `user-${json.user} : ${json.message}`
+            } else if (json.type === 'close') {
+                let user = div.querySelector(`[data-user="${json.user}"]`)
+                if(user) {
+                    user.remove()
+                }
+            }
+        })
+    </script>
+</body>
+</html>
